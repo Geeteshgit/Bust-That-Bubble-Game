@@ -1,6 +1,10 @@
 window.addEventListener("DOMContentLoaded",initEvents);
 function initEvents(){
     const start = document.querySelector("#start");
+    const body = document.querySelector("body");
+    const heading = document.querySelector(".heading");
+    const containerHeader = document.querySelector(".header");
+    const textContent = document.querySelectorAll(".box");
     const bubbleContainer = document.querySelector("#bubble-container");
     const hitContainer = document.querySelector(".hit-container p");
     const timeContainer = document.querySelector(".timer-container p");
@@ -9,6 +13,7 @@ function initEvents(){
     let hitnum = 0;
     let score = 0;
     let timerId = null;
+    let changetimer = null;
 
     function makeBubbles(){
         const bubbles = [];
@@ -32,14 +37,17 @@ function initEvents(){
             timer--;
             if(timer<0){
                 clearInterval(timer);
-                if(score>=350){
-                    bubbleContainer.innerHTML = `<div><h1>Your Score Is : ${score}! <br> You Seem Like A Pro!`;
+                if(score>=250){
+                    bubbleContainer.innerHTML = `<div><h1 class="heading">Your Score Is : ${score}! <br> You Seem Like A Pro!</h1></div>`;
+                    clearInterval(changetimer);
                 }
-                else if(score>250 && score<350){
-                    bubbleContainer.innerHTML = `<div><h1>Your Score Is : ${score}! <br> You're Good At It!`;
+                else if(score>150 && score<250){
+                    bubbleContainer.innerHTML = `<div><h1 class="heading">Your Score Is : ${score}! <br> You're Good At It!</h1></div>`;
+                    clearInterval(changetimer);
                 }
                 else{
-                    bubbleContainer.innerHTML = `<div><h1>Your Score Is : ${score}! <br> You Need To Be Faster!`;
+                    bubbleContainer.innerHTML = `<div><h1 class="heading">Your Score Is : ${score}! <br> You Need To Be Faster!</h1></div>`;
+                    clearInterval(changetimer);
                 }
             }
             else{
@@ -47,6 +55,14 @@ function initEvents(){
             }
 
         }, 1000);
+    }
+
+    function changeBubbles(){
+        changetimer = setInterval(()=>{
+            makeBubbles();
+            generateHitNum();
+            updateScore();
+        },2000);
     }
 
     function resetTimer(){
@@ -66,6 +82,8 @@ function initEvents(){
                     score += 10;
                     scoreContainer.innerText = score;
                     updateScore();
+                    clearInterval(changetimer);
+                    changeBubbles();
                 }
                 else{
                     makeBubbles();
@@ -78,19 +96,71 @@ function initEvents(){
                         scoreContainer.innerText = score;
                     }
                     updateScore();
+                    clearInterval(changetimer);
+                    changeBubbles();
                 }
             });
         });
+        bubbles.forEach((bub)=>{
+            if(score<=150){
+                body.style.backgroundColor = "#95d5b2";
+                heading.style.color = "#1b4332";
+                containerHeader.style.backgroundColor = "#2d6a4f";
+                start.style.color = "#1b4332";
+                textContent.forEach((text)=>{
+                    text.style.color = "#2d6a4f";
+                });
+                bub.style.backgroundColor = "#2d6a4f";
+                bub.addEventListener("mouseenter",()=>{
+                    bub.style.backgroundColor = "#40916c";
+                });
+                bub.addEventListener("mouseleave",()=>{
+                    bub.style.backgroundColor = "#2d6a4f";
+                });
+            }
+            else if(score>150 && score<250){
+                body.style.backgroundColor = "#90e0ef";
+                heading.style.color = "#023e8a";
+                containerHeader.style.backgroundColor ="#0077b6";
+                start.style.color = "#023e8a";
+                textContent.forEach((text)=>{
+                    text.style.color = "#0077b6";
+                });
+                bub.style.backgroundColor = "#0077b6";
+                bub.addEventListener("mouseenter",()=>{
+                    bub.style.backgroundColor = "#0096c7";
+                });
+                bub.addEventListener("mouseleave",()=>{
+                    bub.style.backgroundColor = "#0077b6";
+                });
+            }
+            else{
+                body.style.backgroundColor = "#ff758f";
+                heading.style.color = "#800f2f";
+                containerHeader.style.backgroundColor ="#c9184a";
+                start.style.color = "#800f2f";
+                textContent.forEach((text)=>{
+                    text.style.color = "#c9184a";
+                });
+                bub.style.backgroundColor = "#c9184a";
+                bub.addEventListener("mouseenter",()=>{
+                    bub.style.backgroundColor = "#ff4d6d";
+                });
+                bub.addEventListener("mouseleave",()=>{
+                    bub.style.backgroundColor = "#c9184a";
+                });
+            }
+        });
     }
-
     start.addEventListener("click",()=>{
+        score = 0;
+        scoreContainer.innerText = "0";
         makeBubbles();
         generateHitNum();
         resetTimer();
-        startTimer();
         updateScore();
-        score = 0;
-        scoreContainer.innerText = "0";
+        startTimer();
+        clearInterval(changetimer)
+        changeBubbles();
     });
-
 }
